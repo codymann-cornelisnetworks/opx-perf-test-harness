@@ -1,11 +1,11 @@
 #! /usr/bin/env bash
-#SBATCH --job-name='run-perf-test'
+#SBATCH --job-name='perf-test'
 #SBATCH --nodes=2
 #SBATCH --output=/home/cmann/slurm-logs/%x-%j.out
 #SBATCH --error=/home/cmann/slurm-logs/%x-%j.err
 
 source ./config.sh
-source ../utilities.sh
+source ./utilities.sh
 
 date_string=$(date +%F-%H-%M-%S-%N)
 RESULTS_DIR=$RUN_RESULTS_ROOT/${date_string}
@@ -26,13 +26,11 @@ fi
 NP=$(($PPN*$NUM_NODES))
 
 # Calculate the IMPI logical core pin list
-# MAX_PIN=$(($PPN-1))
-# PIN_LIST=$(seq -s, 0 $MAX_PIN)
-PIN_LIST=$(seq -s, 32 43)
+MAX_PIN=$(($PPN-1))
+PIN_LIST=$(seq -s, 0 $MAX_PIN)
 
 for run in "${RUNS[@]}"
 do
-
     for ((i=0; i<${RUN_ITERS}; i++))
     do
 
@@ -48,12 +46,12 @@ do
         COMMAND="LD_LIBRARY_PATH=$LIBFAB_BUILD_PATH/lib:$LD_LIBRARY_PATH I_MPI_FABRICS=ofi I_MPI_OFI_LIBRARY_INTERNAL=off I_MPI_PIN_PROCESSOR_LIST=$PIN_LIST ${RUN_ENV}"
         COMMAND=$COMMAND" mpirun -errfile-pattern=$STDERR_LOG_DIR/output.err-%r-%h -np $NP -ppn $PPN -host $HOSTS -genvall IMB-MPI1 $BENCHMARKS -iter $ITER -msglog $MSG_LOG -npmin $NP"
 
-        echo "$run_${i}: $COMMAND" >> $LOGFILE
+        echo "${run}_${i}: $COMMAND" >> $LOGFILE
         eval $COMMAND | tee -a $LOGFILE
     done
 done
 
 # Parse the results
-python3 ../parsers/parse.py $RESULTS_DIR
+python3 ./parse.py $RESULTS_DIR
 
 mv $RESULTS_DIR $RESULTS_COMPLETED_ROOT/ || die "Failed to move $RESULTS_DIR to $RESULTS_COMPLETED_ROOT"
