@@ -1,11 +1,10 @@
 #! /usr/bin/env bash
-#SBATCH --job-name='perf-test'
-#SBATCH --nodes=2
-#SBATCH --output=/home/cmann/slurm-logs/%x-%j.out
-#SBATCH --error=/home/cmann/slurm-logs/%x-%j.err
+#SBATCH --job-name='opx-perf-test'
 
-source ./config.sh
+export CONFIG_FILE="${CONFIG_FILE:-default_config.sh}"
+
 source ./utilities.sh
+source ${CONFIG_FILE}
 
 date_string=$(date +%F-%H-%M-%S-%N)
 RESULTS_DIR=$RUN_RESULTS_ROOT/${date_string}
@@ -55,4 +54,6 @@ done
 python3 ./parse.py $RESULTS_DIR
 
 mkdir -p $RESULTS_COMPLETED_ROOT
-mv $RESULTS_DIR $RESULTS_COMPLETED_ROOT/ || die "Failed to move $RESULTS_DIR to $RESULTS_COMPLETED_ROOT"
+mv $RESULTS_DIR $RESULTS_COMPLETED_ROOT/${date_string} || die "Failed to move $RESULTS_DIR to $RESULTS_COMPLETED_ROOT/${date_string}"
+
+log_success "Final results placed in the following directory: $RESULTS_COMPLETED_ROOT/${date_string}"
