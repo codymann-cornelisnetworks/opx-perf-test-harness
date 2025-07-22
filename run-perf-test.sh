@@ -54,4 +54,5 @@ done
 # Parse the results
 python3 ./parse.py $RESULTS_DIR
 
+mkdir -p $RESULTS_COMPLETED_ROOT
 mv $RESULTS_DIR $RESULTS_COMPLETED_ROOT/ || die "Failed to move $RESULTS_DIR to $RESULTS_COMPLETED_ROOT"

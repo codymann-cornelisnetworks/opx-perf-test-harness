@@ -7,12 +7,12 @@ export BENCHMARKS=Biband
 export ITER=1000
 export MSG_LOG=0:22
 export HOSTS=opx-emr-003,opx-emr-004
-export RUN_ITERS=1
+export RUN_ITERS=3
 
 declare -a RUNS=("opx-main" "opx-1-way")
 
 declare -A LIBFABRIC_BUILDS=(
-    ["opx-main"]=""
+    ["opx-main"]="/home/cmann/builds/OPX-JKR-EMR-B-myr/libfabric-builds/66faf921b91af493f2ed65ff6336885761a46a3e.optimized"
     ["opx-1-way"]="/home/cmann/builds/OPX-JKR-EMR-B-myr/libfabric-builds/427e505638f9542d7a1188e38e0c1773007287eb.optimized"
 )
 
